@@ -73,31 +73,10 @@ dependencies {
     
     // Architectury API
     implementation fg.deobf("dev.architectury:architectury-forge:$architectury_api_version")
-    // EMI
-    compileOnly fg.deobf("dev.emi:emi-forge:${emi_version}:api")
     // GeckoLib
     implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${minecraft_version}:$geckolib_version")
-    // Jade
-    compileOnly fg.deobf("curse.maven:jade-324717:4780012")
-    // JEI
-    compileOnly fg.deobf("mezz.jei:jei-$minecraft_version-forge:$jei_version")
-    // REI
-    compileOnly fg.deobf("me.shedaniel:RoughlyEnoughItems-forge:$rei_version")
-
-    /// runtime-only
-
-    // recipe viewer runtime
-    switch (recipe_viewer.toLowerCase(Locale.ROOT)) {
-        case "emi": runtimeOnly fg.deobf("dev.emi:emi-forge:$emi_version"); break
-        case "jei": runtimeOnly fg.deobf("mezz.jei:jei-$minecraft_version-forge:$jei_version"); break
-        case "rei": runtimeOnly fg.deobf("me.shedaniel:RoughlyEnoughItems-forge:$rei_version"); break
-        case "disabled": break
-        default: println("Unknown recipe viewer specified: $recipe_viewer. Must be EMI, REI, JEI, or disabled.")
-    }
-    // Athena (CTM)
-    runtimeOnly fg.deobf("earth.terrarium.athena:athena-forge-${minecraft_version}:3.1.2")
-    // Jade
-    runtimeOnly fg.deobf("curse.maven:jade-324717:4780012")
+    // JEI (optional - for recipe viewer support)
+    compileOnly fg.deobf("mezz.jei:jei-$minecraft_version-forge-api:$jei_version")
 }
 
 tasks.withType(AbstractCopyTask).configureEach {

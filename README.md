@@ -10,7 +10,7 @@
   A minecraft Forge 1.20.1 backport of the Oritech tech mod.
   <br/>
   <br/>
-  <strong>⚠️ WORK IN PROGRESS - This backport is not yet functional ⚠️</strong>
+  <strong>⚠️ WORK IN PROGRESS - Requires major source code rewrites ⚠️</strong>
   <br/>
   <br/>
   <a href="https://moddedmc.org/en/mod/oritech/docs"><strong>Explore the original docs»</strong></a>
@@ -29,29 +29,44 @@
 
 This is an attempt to backport the Oritech mod from Minecraft 1.21.1 (NeoForge/Fabric) to Minecraft 1.20.1 (Forge 47.4.10).
 
+### ⚠️ Important: Scope of Work Required
+
+After testing the build with network access, **4315+ compilation errors** were discovered. The core issue is that:
+
+1. **owo-lib** is a Fabric-only library with no Forge 1.20.1 port. The mod's GUI system, configuration, and serialization all depend on owo-lib.
+2. **Minecraft 1.21 APIs** used throughout the code don't exist in 1.20.1 (StreamCodec, RecipeInput, RecipeOutput, RegistryFriendlyByteBuf, etc.)
+
+This means a proper backport would require **rewriting the entire mod**, not just adapting APIs.
+
 ### Backport Status
 
-The build system has been configured for Forge 1.20.1, but significant source code changes are still required:
-
-#### ✅ Completed
-- Build configuration updated for ForgeGradle
-- Gradle properties configured for MC 1.20.1
-- Java version updated from 21 to 17
-- mods.toml updated for Forge format
-- Mixin configurations updated for Java 17
-- NeoForge platform code removed
+#### ✅ Build System (Complete)
+- ForgeGradle configuration for MC 1.20.1 / Forge 47.4.10
+- Gradle properties and wrapper configured
+- Java 17 toolchain setup
+- mods.toml in Forge format
+- Mixin configurations for Java 17
+- All data files converted from NeoForge to Forge format (biome modifiers, recipe conditions)
 - Basic Forge mod entrypoint created
 
-#### ❌ Still Required
-- **API Changes**: Many Minecraft APIs changed between 1.20.1 and 1.21
-  - `ResourceLocation.fromNamespaceAndPath()` → `new ResourceLocation(namespace, path)`
-  - Component system changes (1.21 uses DataComponents, 1.20.1 uses NBT)
-  - Registry API differences
-- **Architectury API**: Common code uses Architectury 13.x which is for 1.21; needs Architectury 9.x for 1.20.1
-- **owo-lib**: The mod heavily depends on owo-lib which has different versions for each MC version
-- **GeckoLib**: Version needs updating for 1.20.1 compatibility
-- **Platform Layer**: The Forge platform implementation needs to be written to replace NeoForge-specific code
-- **Energy/Fluid APIs**: Need to use Forge capabilities system instead of NeoForge's capability registration
+#### ❌ Source Code (Requires Major Rewrite)
+The 454 Java source files have **4315+ compilation errors** due to:
+
+| Issue | Description | Affected Files |
+|-------|-------------|----------------|
+| owo-lib | No Forge 1.20.1 port exists | All GUI, config, serialization code |
+| StreamCodec | MC 1.21 networking API | Network packets, recipes |
+| RecipeInput/Output | MC 1.21 recipe API | All recipe handling |
+| DataComponents | MC 1.21 item data system | All item/block data storage |
+| ResourceLocation | API signature changes | Every file using resource locations |
+
+### Recommendations
+
+For a Forge 1.20.1 version of Oritech, consider:
+
+1. **Starting from Oritech 1.20.4 Fabric branch** - This was Fabric-only but much closer to 1.20.1 APIs
+2. **Using Sinytra Connector** - Run the Fabric version on Forge via compatibility layer
+3. **Complete rewrite** - Rebuild from scratch for Forge using Forge-native APIs
 
 ### Key Differences Between NeoForge 1.21 and Forge 1.20.1
 
@@ -61,14 +76,18 @@ The build system has been configured for Forge 1.20.1, but significant source co
 | Mod Loader | NeoForge | MinecraftForge |
 | Event Bus | `net.neoforged.bus.api.*` | `net.minecraftforge.eventbus.api.*` |
 | Capabilities | `RegisterCapabilitiesEvent` | `AttachCapabilitiesEvent` |
-| Networking | Payload system | SimpleChannel |
-| Data Components | Component system | NBT-based |
-| Registries | DeferredRegister/NeoForge | DeferredRegister/Forge |
+| Networking | Payload/StreamCodec system | SimpleChannel/FriendlyByteBuf |
+| Data Storage | DataComponents | NBT-based |
+| Recipe API | RecipeInput/RecipeOutput | Container/FinishedRecipe |
+| Required Libraries | owo-lib (Fabric) | No equivalent |
 
 ## Building
 
+The build system works - dependencies resolve and the Forge setup completes:
+
 ```bash
-./gradlew :forge:build
+./gradlew :forge:compileJava
+# Results in 4315+ errors due to source code incompatibilities
 ```
 
 ## Original Project
