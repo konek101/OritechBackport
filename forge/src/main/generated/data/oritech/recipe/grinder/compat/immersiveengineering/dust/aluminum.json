@@ -1,13 +1,13 @@
 {
-  "neoforge:conditions": [
+  "forge:conditions": [
     {
-      "type": "neoforge:mod_loaded",
+      "type": "forge:mod_loaded",
       "modid": "immersiveengineering"
     },
     {
-      "type": "neoforge:not",
+      "type": "forge:not",
       "value": {
-        "type": "neoforge:mod_loaded",
+        "type": "forge:mod_loaded",
         "modid": "jaopca"
       }
     }
