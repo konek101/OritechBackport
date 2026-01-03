@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[47,)"
+loaderVersion = "[47.0,48.0)"
 issueTrackerURL = "https://github.com/konek101/OritechBackport/issues"
 license = "CC0-1.0"
 
