@@ -1,6 +1,6 @@
 modLoader = "javafml"
-loaderVersion = "[4,)"
-issueTrackerURL = "https://github.com/Rearth/Oritech/issues"
+loaderVersion = "[47,)"
+issueTrackerURL = "https://github.com/konek101/OritechBackport/issues"
 license = "CC0-1.0"
 
 [[mods]]
@@ -14,45 +14,40 @@ Simple tech mod.
 #logoFile = ""
 
 [[dependencies.oritech]]
-modId = "neoforge"
-type = "required"
-versionRange = "[21.1.200,)"
+modId = "forge"
+mandatory = true
+versionRange = "[47,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.oritech]]
 modId = "minecraft"
-type = "required"
-versionRange = "[1.21,)"
+mandatory = true
+versionRange = "[1.20.1,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.oritech]]
 modId = "architectury"
-type = "required"
-versionRange = "[13.0.2,)"
+mandatory = true
+versionRange = "[9.0.0,)"
 ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.oritech]]
 modId = "athena"
-type = "required"
+mandatory = true
 ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.oritech]]
 modId = "owo"
-type = "required"
+mandatory = true
 ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.oritech]]
 modId = "geckolib"
-type = "required"
+mandatory = true
 ordering = "AFTER"
 side = "BOTH"
-
-[[mixins]]
-config = "oritech_forge.mixins.json"
-[[mixins]]
-config = "oritech.mixins.json"

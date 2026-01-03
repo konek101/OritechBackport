@@ -1,8 +1,7 @@
 plugins {
-    id 'net.neoforged.moddev' version '2.0.107' apply false
-    id 'fabric-loom' version '1.9-SNAPSHOT' apply false
-    id "me.modmuss50.mod-publish-plugin" version "0.8.0" apply false
-    id 'org.sinytra.wiki.toolkit' version '0.1.16'
+    id 'architectury-plugin' version '3.4-SNAPSHOT' apply false
+    id 'dev.architectury.loom' version '1.6-SNAPSHOT' apply false
+    id "me.modmuss50.mod-publish-plugin" version "0.5.1" apply false
 }
 
 // all projects including the root project
@@ -16,15 +15,20 @@ allprojects {
 
     java {
         withSourcesJar()
-        toolchain.languageVersion = JavaLanguageVersion.of(21)
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+        toolchain.languageVersion = JavaLanguageVersion.of(17)
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
 // all projects but the root project
 subprojects {
     apply plugin: 'maven-publish'
+    apply plugin: 'architectury-plugin'
+
+    architectury {
+        minecraft = minecraft_version
+    }
 
     sourceSets {
         main {
@@ -51,8 +55,6 @@ subprojects {
         maven { url = "https://maven.teamresourceful.com/repository/maven-public/" }
         // EMI
         maven { url = 'https://maven.terraformersmc.com/' }
-        // Forgified Fabric API
-        maven { url = "https://maven.su5ed.dev/releases" }
         // FTB Chunks
         maven { url = "https://maven.ftb.dev/releases" }
         // GeckoLib
@@ -145,7 +147,7 @@ subprojects {
             }
         
             inputs.property 'version', project.version
-            filesMatching(['META-INF/neoforge.mods.toml', "fabric.mod.json"]) {
+            filesMatching(['META-INF/mods.toml', "fabric.mod.json"]) {
                 expand version: version
             }
         }
@@ -164,23 +166,11 @@ subprojects {
     }
 }
 
-// sinytra wiki
-wiki {
-    docs {
-        oritech {
-            // path to the folder containing metadata file (sinytra-wiki.json)
-            root = file('docs')
-            exportedAssetNamespaces = ['oritech']
-            wikiAccessToken = System.getenv('WIKI_TOKEN')
-        }
-    }
-}
-
 publishMods {
     github {
         accessToken = providers.environmentVariable("GITHUB_TOKEN")
-        repository = "Rearth/Oritech"
-        commitish = "1.21"
+        repository = "konek101/OritechBackport"
+        commitish = "1.20.1"
         changelog = file("./CHANGELOG.MD").getText()
         type = STABLE
         tagName = "v${project.version}"

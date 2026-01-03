@@ -1,0 +1,141 @@
+plugins {
+    id 'dev.architectury.loom'
+}
+
+loom {
+    silentMojangMappingsLicense()
+    
+    forge {
+        mixinConfig "oritech.mixins.json"
+    }
+    
+    runs {
+        client {
+            client()
+            ideConfigGenerated(true)
+            name = 'forge - Client'
+        }
+        server {
+            server()
+            ideConfigGenerated(true)
+            name = 'forge - Server'
+        }
+        // datagen run config for Forge recipes
+        data {
+            data()
+            ideConfigGenerated(true)
+            name = 'forge - Data'
+            source("data")
+            
+            programArgs '--all', '--mod', mod_id, '--output', file('src/main/generated/').absolutePath
+        }
+    }
+}
+
+architectury {
+    platformSetupLoomIde()
+    forge()
+}
+
+// create a runtime-only configuration that published to POM
+configurations {
+    localRuntime {
+        canBeConsumed = false
+        visible = false
+    }
+
+    named(sourceSets.main.runtimeClasspathConfigurationName) {
+        extendsFrom(configurations.localRuntime)
+    }
+}
+
+repositories {
+    // Forge Maven
+    maven { url = "https://maven.minecraftforge.net/" }
+}
+
+dependencies {
+    // Minecraft
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.layered {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${minecraft_version}:${parchment_mappings}@zip")
+    }
+    
+    // Forge
+    forge "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    
+    // Architectury API
+    modImplementation "dev.architectury:architectury-forge:$architectury_api_version"
+    // EMI
+    modCompileOnly "dev.emi:emi-forge:${emi_version}:api"
+    // GeckoLib
+    modImplementation "software.bernie.geckolib:geckolib-forge-${minecraft_version}:$geckolib_version"
+    // Jade
+    modCompileOnly "curse.maven:jade-324717:4780012"
+    // JEI
+    modCompileOnly("mezz.jei:jei-$minecraft_version-forge:$jei_version") { transitive = false }
+    // owo-lib
+    modImplementation "io.wispforest:owo-lib:$owo_forge_version"
+    annotationProcessor "io.wispforest:owo-lib:$owo_forge_version"
+    // REI
+    modCompileOnly "me.shedaniel:RoughlyEnoughItems-forge:$rei_version"
+
+    /// runtime-only
+
+    // recipe viewer runtime
+    switch (recipe_viewer.toLowerCase(Locale.ROOT)) {
+        case "emi": modLocalRuntime "dev.emi:emi-forge:$emi_version"; break
+        case "jei": modLocalRuntime "mezz.jei:jei-$minecraft_version-forge:$jei_version"; break
+        case "rei": modLocalRuntime "me.shedaniel:RoughlyEnoughItems-forge:$rei_version"; break
+        case "disabled": break
+        default: println("Unknown recipe viewer specified: $recipe_viewer. Must be EMI, REI, JEI, or disabled.")
+    }
+    // Athena (CTM)
+    modRuntimeOnly "earth.terrarium.athena:athena-forge-${minecraft_version}:3.1.2"
+    // Jade
+    modLocalRuntime "curse.maven:jade-324717:4780012"
+}
+
+publishMods {
+    file = remapJar.archiveFile
+    changelog = file("../CHANGELOG.MD").getText()
+    type = BETA
+    modLoaders.add("forge")
+
+    modrinth {
+        accessToken = providers.environmentVariable("MODRINTH_API_KEY")
+        projectId = "4sYI62kA"
+        minecraftVersions.add("1.20.1")
+
+        requires("owo-lib")
+        requires("geckolib")
+        requires("athena-ctm")
+        requires("architectury-api")
+
+        announcementTitle = "Forge Version on Modrinth"
+    }
+
+    curseforge {
+        accessToken = providers.environmentVariable("CURSEFORGE_API_KEY")
+        projectId = "1030830"
+        minecraftVersions.add("1.20.1")
+
+        requires("owo-lib")
+        requires("geckolib")
+        requires("athena")
+        requires("architectury-api")
+
+        javaVersions.add(JavaVersion.VERSION_17)
+        clientRequired = true
+        serverRequired = true
+
+        projectSlug = "oritech"
+        announcementTitle = "Forge Version on CurseForge"
+    }
+
+    github {
+        accessToken = providers.environmentVariable("GITHUB_TOKEN")
+        parent project(":").tasks.named("publishGithub")
+    }
+}

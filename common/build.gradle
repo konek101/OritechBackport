@@ -1,17 +1,13 @@
 plugins {
-    id 'net.neoforged.moddev'
+    id 'dev.architectury.loom'
 }
 
-neoForge {
-    // only apply NeoForm to use Vanilla mode (no loader)
-    neoFormVersion = "$minecraft_version-$neoform_version"
-    parchment {
-        minecraftVersion = minecraft_version
-        mappingsVersion = parchment_mappings
-    }
+loom {
+    silentMojangMappingsLicense()
+}
 
-    validateAccessTransformers = true
-    interfaceInjectionData.from file('src/main/resources/interfaces.json').absolutePath
+architectury {
+    common(rootProject.enabled_platforms.split(","))
 }
 
 configurations {
@@ -33,35 +29,26 @@ artifacts {
 }
 
 dependencies {
+    // Minecraft
+    minecraft "com.mojang:minecraft:$minecraft_version"
+    mappings loom.layered {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${minecraft_version}:${parchment_mappings}@zip")
+    }
+    
     // Architectury API
-    compileOnlyApi "dev.architectury:architectury-neoforge:$architectury_api_version"
+    modImplementation "dev.architectury:architectury:$architectury_api_version"
     // EMI
-    compileOnly "dev.emi:emi-xplat-mojmap:${emi_version}"
-    // FTB Chunks
-    compileOnly("dev.ftb.mods:ftb-chunks-neoforge:2101.1.10") { transitive = false }
-    compileOnly("dev.ftb.mods:ftb-library-neoforge:2101.1.19") { transitive = false }
+    modCompileOnly "dev.emi:emi-xplat-mojmap:${emi_version}:api"
     // GeckoLib
-    compileOnlyApi "software.bernie.geckolib:geckolib-neoforge-$minecraft_version:$geckolib_version"
+    modImplementation "software.bernie.geckolib:geckolib-common-${minecraft_version}:$geckolib_version"
     // Jade
-    compileOnly "curse.maven:jade-324717:6853386"
+    modCompileOnly "curse.maven:jade-324717:4780011"
     // JEI
-    compileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}") { transitive = false }
-    // Mixin
-    compileOnly 'org.spongepowered:mixin:0.8.5'
-    compileOnly 'org.ow2.asm:asm-tree:9.8'
-    // Mixin Extras
-    compileOnly 'io.github.llamalad7:mixinextras-common:0.3.5'
-    annotationProcessor 'io.github.llamalad7:mixinextras-common:0.3.5'
-    // Oracle Index
-    compileOnly "curse.maven:oracle-index-1206582:6904573"
+    modCompileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}") { transitive = false }
     // owo-lib
-    compileOnlyApi "io.wispforest:owo-lib-neoforge:$owo_neo_version"
-    annotationProcessor "io.wispforest:owo-lib-neoforge:$owo_neo_version"
-    accessTransformers "io.wispforest:owo-lib-neoforge:$owo_neo_version"
-    interfaceInjectionData "io.wispforest:owo-lib-neoforge:$owo_neo_version"
+    modCompileOnly "io.wispforest:owo-lib:$owo_version"
+    annotationProcessor "io.wispforest:owo-lib:$owo_version"
     // REI
-    compileOnly "me.shedaniel:RoughlyEnoughItems-neoforge:$rei_version"
-
-    // ftb filters
-    compileOnly "curse.maven:ftb-filter-system-943925:6899527"
+    modCompileOnly "me.shedaniel:RoughlyEnoughItems-api:$rei_version"
 }
