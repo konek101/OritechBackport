@@ -1,141 +1,126 @@
 plugins {
-    id 'dev.architectury.loom'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
 
-loom {
-    silentMojangMappingsLicense()
-    
-    forge {
-        mixinConfig "oritech.mixins.json"
-    }
+base {
+    archivesName = "oritech-forge-${minecraft_version}"
+}
+
+java {
+    withSourcesJar()
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+minecraft {
+    mappings channel: 'parchment', version: "${parchment_mappings}-${minecraft_version}"
     
     runs {
         client {
-            client()
-            ideConfigGenerated(true)
-            name = 'forge - Client'
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                oritech {
+                    source sourceSets.main
+                }
+            }
         }
         server {
-            server()
-            ideConfigGenerated(true)
-            name = 'forge - Server'
-        }
-        // datagen run config for Forge recipes
-        data {
-            data()
-            ideConfigGenerated(true)
-            name = 'forge - Data'
-            source("data")
-            
-            programArgs '--all', '--mod', mod_id, '--output', file('src/main/generated/').absolutePath
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                oritech {
+                    source sourceSets.main
+                }
+            }
         }
     }
 }
 
-architectury {
-    platformSetupLoomIde()
-    forge()
-}
-
-// create a runtime-only configuration that published to POM
-configurations {
-    localRuntime {
-        canBeConsumed = false
-        visible = false
-    }
-
-    named(sourceSets.main.runtimeClasspathConfigurationName) {
-        extendsFrom(configurations.localRuntime)
+sourceSets {
+    main {
+        resources {
+            srcDir(file("src/main/generated"))
+            srcDir(project(":").file("common/src/main/resources"))
+            srcDir(project(":").file("common/src/main/generated"))
+            exclude("**/.cache")
+        }
+        java {
+            srcDir(project(":").file("common/src/main/java"))
+        }
     }
 }
 
 repositories {
-    // Forge Maven
+    mavenCentral()
+    maven { url = "https://modmaven.dev" }
+    maven { url = "https://beta.cursemaven.com" }
+    maven { url = "https://maven.architectury.dev/" }
+    maven { url = "https://maven.teamresourceful.com/repository/maven-public/" }
+    maven { url = 'https://maven.terraformersmc.com/' }
+    maven { url = "https://maven.ftb.dev/releases" }
+    maven { url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
+    maven { url = 'https://maven.wispforest.io/releases/' }
+    maven { url = 'https://maven.parchmentmc.org' }
     maven { url = "https://maven.minecraftforge.net/" }
 }
 
 dependencies {
-    // Minecraft
-    minecraft "com.mojang:minecraft:${minecraft_version}"
-    mappings loom.layered {
-        officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${minecraft_version}:${parchment_mappings}@zip")
-    }
-    
     // Forge
-    forge "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     
     // Architectury API
-    modImplementation "dev.architectury:architectury-forge:$architectury_api_version"
+    implementation fg.deobf("dev.architectury:architectury-forge:$architectury_api_version")
     // EMI
-    modCompileOnly "dev.emi:emi-forge:${emi_version}:api"
+    compileOnly fg.deobf("dev.emi:emi-forge:${emi_version}:api")
     // GeckoLib
-    modImplementation "software.bernie.geckolib:geckolib-forge-${minecraft_version}:$geckolib_version"
+    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${minecraft_version}:$geckolib_version")
     // Jade
-    modCompileOnly "curse.maven:jade-324717:4780012"
+    compileOnly fg.deobf("curse.maven:jade-324717:4780012")
     // JEI
-    modCompileOnly("mezz.jei:jei-$minecraft_version-forge:$jei_version") { transitive = false }
-    // owo-lib
-    modImplementation "io.wispforest:owo-lib:$owo_forge_version"
-    annotationProcessor "io.wispforest:owo-lib:$owo_forge_version"
+    compileOnly fg.deobf("mezz.jei:jei-$minecraft_version-forge:$jei_version")
     // REI
-    modCompileOnly "me.shedaniel:RoughlyEnoughItems-forge:$rei_version"
+    compileOnly fg.deobf("me.shedaniel:RoughlyEnoughItems-forge:$rei_version")
 
     /// runtime-only
 
     // recipe viewer runtime
     switch (recipe_viewer.toLowerCase(Locale.ROOT)) {
-        case "emi": modLocalRuntime "dev.emi:emi-forge:$emi_version"; break
-        case "jei": modLocalRuntime "mezz.jei:jei-$minecraft_version-forge:$jei_version"; break
-        case "rei": modLocalRuntime "me.shedaniel:RoughlyEnoughItems-forge:$rei_version"; break
+        case "emi": runtimeOnly fg.deobf("dev.emi:emi-forge:$emi_version"); break
+        case "jei": runtimeOnly fg.deobf("mezz.jei:jei-$minecraft_version-forge:$jei_version"); break
+        case "rei": runtimeOnly fg.deobf("me.shedaniel:RoughlyEnoughItems-forge:$rei_version"); break
         case "disabled": break
         default: println("Unknown recipe viewer specified: $recipe_viewer. Must be EMI, REI, JEI, or disabled.")
     }
     // Athena (CTM)
-    modRuntimeOnly "earth.terrarium.athena:athena-forge-${minecraft_version}:3.1.2"
+    runtimeOnly fg.deobf("earth.terrarium.athena:athena-forge-${minecraft_version}:3.1.2")
     // Jade
-    modLocalRuntime "curse.maven:jade-324717:4780012"
+    runtimeOnly fg.deobf("curse.maven:jade-324717:4780012")
 }
 
-publishMods {
-    file = remapJar.archiveFile
-    changelog = file("../CHANGELOG.MD").getText()
-    type = BETA
-    modLoaders.add("forge")
+tasks.withType(AbstractCopyTask).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
 
-    modrinth {
-        accessToken = providers.environmentVariable("MODRINTH_API_KEY")
-        projectId = "4sYI62kA"
-        minecraftVersions.add("1.20.1")
-
-        requires("owo-lib")
-        requires("geckolib")
-        requires("athena-ctm")
-        requires("architectury-api")
-
-        announcementTitle = "Forge Version on Modrinth"
+processResources {
+    inputs.property 'version', project.version
+    filesMatching(['META-INF/mods.toml']) {
+        expand version: version
     }
+}
 
-    curseforge {
-        accessToken = providers.environmentVariable("CURSEFORGE_API_KEY")
-        projectId = "1030830"
-        minecraftVersions.add("1.20.1")
-
-        requires("owo-lib")
-        requires("geckolib")
-        requires("athena")
-        requires("architectury-api")
-
-        javaVersions.add(JavaVersion.VERSION_17)
-        clientRequired = true
-        serverRequired = true
-
-        projectSlug = "oritech"
-        announcementTitle = "Forge Version on CurseForge"
-    }
-
-    github {
-        accessToken = providers.environmentVariable("GITHUB_TOKEN")
-        parent project(":").tasks.named("publishGithub")
+jar {
+    manifest {
+        attributes([
+            "Specification-Title": "oritech",
+            "Specification-Vendor": "Rearth",
+            "Specification-Version": "1",
+            "Implementation-Title": project.name,
+            "Implementation-Version": project.version,
+            "Implementation-Vendor" :"Rearth",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
     }
 }
