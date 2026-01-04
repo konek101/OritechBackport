@@ -9,9 +9,9 @@ base {
 
 java {
     withSourcesJar()
-    toolchain.languageVersion = JavaLanguageVersion.of(17)
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 minecraft {
@@ -83,8 +83,9 @@ dependencies {
     implementation fg.deobf("dev.su5ed.sinytra.fabric-api:fabric-api:0.92.2+1.11.8+1.20.1")
     
     // owo-lib (Fabric) - works via Sinytra Connector
-    // Note: 1.20.1 owo-lib doesn't have endec serialization (added in 0.12.0 for 1.20.2+)
     implementation "io.wispforest:owo-lib:${owo_version}"
+    // endec serialization library (requires Java 21)
+    implementation "io.wispforest:endec:0.1.5"
     
     // Architectury API
     implementation fg.deobf("dev.architectury:architectury-forge:$architectury_api_version")
