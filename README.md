@@ -10,7 +10,7 @@
   A minecraft Forge 1.20.1 backport of the Oritech tech mod.
   <br/>
   <br/>
-  <strong>⚠️ WORK IN PROGRESS - Requires major source code rewrites ⚠️</strong>
+  <strong>⚠️ WORK IN PROGRESS - Requires source code rewrites ⚠️</strong>
   <br/>
   <br/>
   <a href="https://moddedmc.org/en/mod/oritech/docs"><strong>Explore the original docs»</strong></a>
@@ -29,35 +29,41 @@
 
 This is an attempt to backport the Oritech mod from Minecraft 1.21.1 (NeoForge/Fabric) to Minecraft 1.20.1 (Forge 47.4.10).
 
-### ⚠️ Important: Scope of Work Required
+### Build Configuration with Sinytra Connector
 
-After testing the build with network access, **4315+ compilation errors** were discovered. The core issue is that:
+This backport uses **Sinytra Connector** to allow Fabric libraries (like owo-lib) to run on Forge. The build configuration includes:
+- Sinytra Connector 1.0.0-beta.43
+- Forgified Fabric API 0.92.2
+- owo-lib 0.11.2+1.20
 
-1. **owo-lib** is a Fabric-only library with no Forge 1.20.1 port. The mod's GUI system, configuration, and serialization all depend on owo-lib.
-2. **Minecraft 1.21 APIs** used throughout the code don't exist in 1.20.1 (StreamCodec, RecipeInput, RecipeOutput, RegistryFriendlyByteBuf, etc.)
+### ⚠️ Remaining Blockers
 
-This means a proper backport would require **rewriting the entire mod**, not just adapting APIs.
+Despite adding owo-lib via Sinytra Connector, **3179 compilation errors** remain due to:
+
+1. **endec serialization** - The source code uses `io.wispforest.endec.*` which was introduced in owo-lib 0.12.0 for MC 1.20.2+. The 1.20.1 compatible owo-lib (0.11.x) doesn't have this.
+2. **MC 1.21 APIs** - StreamCodec, RecipeInput, RecipeOutput, RegistryFriendlyByteBuf don't exist in 1.20.1
 
 ### Backport Status
 
 #### ✅ Build System (Complete)
 - ForgeGradle configuration for MC 1.20.1 / Forge 47.4.10
+- Sinytra Connector + Forgified Fabric API integration
+- owo-lib 0.11.2+1.20 via Connector
 - Gradle properties and wrapper configured
 - Java 17 toolchain setup
 - mods.toml in Forge format
-- Mixin configurations for Java 17
-- All data files converted from NeoForge to Forge format (biome modifiers, recipe conditions)
+- All data files converted from NeoForge to Forge format
 - Basic Forge mod entrypoint created
 
-#### ❌ Source Code (Requires Major Rewrite)
-The 454 Java source files have **4315+ compilation errors** due to:
+#### ❌ Source Code (Requires API Adaptation)
+The 454 Java source files have **3179 compilation errors** due to:
 
-| Issue | Description | Affected Files |
-|-------|-------------|----------------|
-| owo-lib | No Forge 1.20.1 port exists | All GUI, config, serialization code |
-| StreamCodec | MC 1.21 networking API | Network packets, recipes |
-| RecipeInput/Output | MC 1.21 recipe API | All recipe handling |
-| DataComponents | MC 1.21 item data system | All item/block data storage |
+| Issue | Description | Solution Required |
+|-------|-------------|-------------------|
+| endec serialization | Used in recipe/config serialization | Rewrite to use Codec/FriendlyByteBuf |
+| StreamCodec | MC 1.21 networking API | Rewrite to use FriendlyByteBuf |
+| RecipeInput/Output | MC 1.21 recipe API | Rewrite to use Container/FinishedRecipe |
+| DataComponents | MC 1.21 item data system | Rewrite to use NBT-based storage |
 | ResourceLocation | API signature changes | Every file using resource locations |
 
 ### Recommendations
