@@ -1,7 +1,7 @@
 package rearth.oritech.api.networking;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.StreamCodec;
+import rearth.oritech.compat.StreamCodec;
 
 // full update is send when GUI is opened, and when the block is loaded for the first time.
 // R is expected to just update relevant info, and T is usually just returns its own instance.

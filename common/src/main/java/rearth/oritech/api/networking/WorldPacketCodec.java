@@ -1,6 +1,6 @@
 package rearth.oritech.api.networking;
 
-import net.minecraft.network.codec.StreamCodec;
+import rearth.oritech.compat.StreamCodec;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
