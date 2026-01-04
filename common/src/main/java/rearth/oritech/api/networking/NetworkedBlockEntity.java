@@ -2,10 +2,8 @@ package rearth.oritech.api.networking;
 
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -13,6 +11,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import rearth.oritech.Oritech;
+import rearth.oritech.compat.RegistryFriendlyByteBuf;
 
 // important: when implementing this class and the block has a GUI, make sure to call `this.sendUpdate(SyncType.GUI_OPEN);` in the `saveExtraData()` method.
 // also ensure the `gui_tick` event type is sent from the screenhandler `sendContentUpdates` call, e.g. `blockEntity.sendUpdate(SyncType.GUI_TICK);`
@@ -107,8 +106,8 @@ public abstract class NetworkedBlockEntity extends BlockEntity implements BlockE
     }
     
     @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registryLookup) {
+    public CompoundTag getUpdateTag() {
         needsInitialUpdate = true;
-        return super.getUpdateTag(registryLookup);
+        return super.getUpdateTag();
     }
 }

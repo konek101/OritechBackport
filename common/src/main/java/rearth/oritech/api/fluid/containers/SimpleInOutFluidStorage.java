@@ -5,8 +5,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.Nullable;
 import rearth.oritech.Oritech;
@@ -14,6 +12,8 @@ import rearth.oritech.api.fluid.FluidApi;
 import rearth.oritech.api.networking.NetworkManager;
 import rearth.oritech.api.networking.SyncType;
 import rearth.oritech.api.networking.UpdatableField;
+import rearth.oritech.compat.RegistryFriendlyByteBuf;
+import rearth.oritech.compat.StreamCodec;
 
 import java.util.List;
 import java.util.function.Consumer;
