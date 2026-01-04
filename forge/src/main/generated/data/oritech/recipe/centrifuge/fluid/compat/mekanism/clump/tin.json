@@ -1,0 +1,33 @@
+{
+  "forge:conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanism"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "jaopca"
+      }
+    }
+  ],
+  "type": "oritech:centrifuge_fluid",
+  "fluidInput": {
+    "amount": 1000,
+    "fluid": "minecraft:water"
+  },
+  "fluidOutputs": [],
+  "ingredients": [
+    {
+      "tag": "c:clumps/tin"
+    }
+  ],
+  "results": [
+    {
+      "count": 2,
+      "id": "mekanism:dust_tin"
+    }
+  ],
+  "time": 150
+}

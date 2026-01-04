@@ -1,0 +1,18 @@
+{
+  "forge:conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "immersiveengineering"
+    }
+  ],
+  "type": "immersiveengineering:alloy",
+  "input0": {
+    "tag": "c:ingots/nickel"
+  },
+  "input1": {
+    "tag": "c:gems/diamond"
+  },
+  "result": {
+    "item": "oritech:adamant_ingot"
+  }
+}

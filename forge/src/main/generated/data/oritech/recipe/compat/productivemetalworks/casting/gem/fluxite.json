@@ -1,0 +1,21 @@
+{
+  "forge:conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "productivemetalworks"
+    }
+  ],
+  "type": "productivemetalworks:item_casting",
+  "cast": {
+    "item": "productivemetalworks:gem_cast"
+  },
+  "consume_cast": false,
+  "fluid": {
+    "amount": 100,
+    "fluid": "oritech:still_molten_fluxite"
+  },
+  "result": {
+    "count": 1,
+    "id": "oritech:fluxite"
+  }
+}

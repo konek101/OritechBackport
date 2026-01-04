@@ -2,16 +2,15 @@ package rearth.oritech.api.fluid.containers;
 
 import dev.architectury.fluid.FluidStack;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import rearth.oritech.api.fluid.FluidApi;
 import rearth.oritech.api.networking.NetworkManager;
 import rearth.oritech.api.networking.SyncType;
 import rearth.oritech.api.networking.UpdatableField;
+import rearth.oritech.compat.StreamCodec;
 
 import java.util.List;
 
@@ -19,9 +18,9 @@ public class SimpleFluidStorage extends FluidApi.SingleSlotStorage implements Up
     
     public static Long transfer(SimpleFluidStorage from, SimpleFluidStorage to, long maxAmount, boolean simulate) {
         
-        var extracted = from.extract(FluidStack.create(from.getFluid(), maxAmount, from.getChanges()), true);   // check how much we could extract at most
-        var inserted = to.insert(FluidStack.create(from.getFluid(), extracted, from.getChanges()), simulate);   // insert max extraction amount
-        extracted = from.extract(FluidStack.create(from.getFluid(), inserted, from.getChanges()), simulate);    // extract only how much was actually inserted
+        var extracted = from.extract(FluidStack.create(from.getFluid(), maxAmount, from.getTag()), true);   // check how much we could extract at most
+        var inserted = to.insert(FluidStack.create(from.getFluid(), extracted, from.getTag()), simulate);   // insert max extraction amount
+        extracted = from.extract(FluidStack.create(from.getFluid(), inserted, from.getTag()), simulate);    // extract only how much was actually inserted
         
         if (extracted > 0 && !simulate) {
             from.update();
@@ -82,19 +81,19 @@ public class SimpleFluidStorage extends FluidApi.SingleSlotStorage implements Up
     }
     
     public void setFluid(Fluid fluid) {
-        content = FluidStack.create(fluid, getAmount(), getChanges());
+        content = FluidStack.create(fluid, getAmount(), getTag());
     }
     
     public Fluid getFluid() {
         return content.getFluid();
     }
     
-    public void setChanges(DataComponentPatch data) {
+    public void setTag(CompoundTag data) {
         content = FluidStack.create(getFluid(), getAmount(), data);
     }
     
-    public DataComponentPatch getChanges() {
-        return content.getPatch();
+    public CompoundTag getTag() {
+        return content.getTag();
     }
     
     @Override

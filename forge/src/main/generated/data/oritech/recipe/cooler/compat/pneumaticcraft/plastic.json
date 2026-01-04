@@ -1,0 +1,22 @@
+{
+  "forge:conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "pneumaticcraft"
+    }
+  ],
+  "type": "oritech:cooler",
+  "fluidInput": {
+    "amount": 1000,
+    "fluid": "pneumaticcraft:plastic"
+  },
+  "fluidOutputs": [],
+  "ingredients": [],
+  "results": [
+    {
+      "count": 1,
+      "id": "oritech:plastic_sheet"
+    }
+  ],
+  "time": 200
+}

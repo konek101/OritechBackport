@@ -8,7 +8,7 @@
     "Me! - rearth"
   ],
   "contact": {
-    "sources": "https://github.com/Rearth/Oritech/",
+    "sources": "https://github.com/konek101/OritechBackport/",
     "homepage": "https://moddedmc.org/en/mod/oritech/docs"
   },
   "license": "CC0-1.0",
@@ -40,12 +40,12 @@
   ],
   "accessWidener": "oritech.accesswidener",
   "depends": {
-    "architectury": ">=13.0.2",
-    "fabricloader": ">=0.15.11",
-    "minecraft": "~1.21",
-    "java": ">=21",
+    "architectury": ">=9.0.0",
+    "fabricloader": ">=0.14.0",
+    "minecraft": "~1.20.1",
+    "java": ">=17",
     "fabric-api": "*",
-    "team_reborn_energy": ">=4.0.0",
+    "team_reborn_energy": ">=3.0.0",
     "owo": "*",
     "geckolib": "*",
     "athena": "*"

@@ -4,10 +4,8 @@ import com.mojang.serialization.Codec;
 import java.util.function.Supplier;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
+import rearth.oritech.compat.StreamCodec;
 
 public interface Attachment<A> {
     

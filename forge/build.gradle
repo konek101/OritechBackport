@@ -1,0 +1,121 @@
+plugins {
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+}
+
+base {
+    archivesName = "oritech-forge-${minecraft_version}"
+}
+
+java {
+    withSourcesJar()
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+minecraft {
+    mappings channel: 'parchment', version: "${parchment_mappings}-${minecraft_version}"
+    
+    runs {
+        client {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                oritech {
+                    source sourceSets.main
+                }
+            }
+        }
+        server {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                oritech {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir(file("src/main/generated"))
+            srcDir(project(":").file("common/src/main/resources"))
+            srcDir(project(":").file("common/src/main/generated"))
+            exclude("**/.cache")
+        }
+        java {
+            srcDir(project(":").file("common/src/main/java"))
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url = "https://modmaven.dev" }
+    maven { url = "https://beta.cursemaven.com" }
+    maven { url = "https://maven.architectury.dev/" }
+    maven { url = "https://maven.teamresourceful.com/repository/maven-public/" }
+    maven { url = 'https://maven.terraformersmc.com/' }
+    maven { url = "https://maven.ftb.dev/releases" }
+    maven { url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
+    maven { url = 'https://maven.wispforest.io/releases/' }
+    maven { url = 'https://maven.parchmentmc.org' }
+    maven { url = "https://maven.minecraftforge.net/" }
+    maven { url = "https://maven.fabricmc.net/" }
+    // Sinytra Connector maven
+    maven {
+        name = "Sinytra"
+        url = "https://maven.su5ed.dev/releases"
+    }
+}
+
+dependencies {
+    // Forge
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    
+    // Sinytra Connector - allows running Fabric mods on Forge
+    implementation fg.deobf("dev.su5ed.sinytra:Connector:1.0.0-beta.43+1.20.1")
+    // Forgified Fabric API (required by Connector)
+    implementation fg.deobf("dev.su5ed.sinytra.fabric-api:fabric-api:0.92.2+1.11.8+1.20.1")
+    
+    // owo-lib (Fabric) - works via Sinytra Connector
+    implementation "io.wispforest:owo-lib:${owo_version}"
+    // endec serialization library (requires Java 21)
+    implementation "io.wispforest:endec:0.1.5"
+    
+    // Architectury API
+    implementation fg.deobf("dev.architectury:architectury-forge:$architectury_api_version")
+    // GeckoLib
+    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${minecraft_version}:$geckolib_version")
+    // JEI (optional - for recipe viewer support)
+    compileOnly fg.deobf("mezz.jei:jei-$minecraft_version-forge-api:$jei_version")
+}
+
+tasks.withType(AbstractCopyTask).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+processResources {
+    inputs.property 'version', project.version
+    filesMatching(['META-INF/mods.toml']) {
+        expand version: version
+    }
+}
+
+jar {
+    manifest {
+        attributes([
+            "Specification-Title": "oritech",
+            "Specification-Vendor": "Rearth",
+            "Specification-Version": "1",
+            "Implementation-Title": project.name,
+            "Implementation-Version": project.version,
+            "Implementation-Vendor" :"Rearth",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}

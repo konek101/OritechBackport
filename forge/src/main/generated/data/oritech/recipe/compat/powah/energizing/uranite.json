@@ -1,0 +1,19 @@
+{
+  "forge:conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "powah"
+    }
+  ],
+  "type": "powah:energizing",
+  "energy": 32000,
+  "ingredients": [
+    {
+      "item": "oritech:uranium_crystal"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "oritech:plutonium_dust"
+  }
+}

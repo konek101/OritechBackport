@@ -1,8 +1,8 @@
 package rearth.oritech.api.energy.containers;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import rearth.oritech.compat.ByteBufCodecs;
+import rearth.oritech.compat.StreamCodec;
 import rearth.oritech.api.energy.EnergyApi;
 import rearth.oritech.api.networking.SyncType;
 import rearth.oritech.api.networking.UpdatableField;

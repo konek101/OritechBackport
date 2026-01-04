@@ -1,11 +1,10 @@
-import net.fabricmc.loom.task.RemapJarTask
-import net.fabricmc.loom.task.RemapSourcesJarTask
-
 plugins {
-    id 'fabric-loom'
+    id 'dev.architectury.loom'
 }
 
 loom {
+    silentMojangMappingsLicense()
+    
     runs {
         client {
             client()
@@ -28,7 +27,6 @@ loom {
             property("fabric-api.datagen")
             property("fabric-api.datagen.modid", "$mod_id-data")
             property("fabric-api.datagen.output-dir", project(":common").file("src/main/generated").absolutePath)
-            //property("fabric-api.datagen.strict-validation")
             property("oritech.datagen.loader", "common")
         }
         // datagen run config for Fabric recipes
@@ -41,7 +39,6 @@ loom {
             property("fabric-api.datagen")
             property("fabric-api.datagen.modid", "$mod_id-data")
             property("fabric-api.datagen.output-dir", file("src/main/generated").absolutePath)
-            //property("fabric-api.datagen.strict-validation")
             property("oritech.datagen.loader", "fabric")
         }
     }
@@ -53,6 +50,11 @@ loom {
     }
 
     createRemapConfigurations(sourceSets.data)
+}
+
+architectury {
+    platformSetupLoomIde()
+    fabric()
 }
 
 repositories {
@@ -75,33 +77,23 @@ dependencies {
     // Fabric API
     modImplementation "net.fabricmc.fabric-api:fabric-api:$fabric_api_version"
 
-    compileOnly 'org.ow2.asm:asm-tree:9.8'
-
     // Architectury API
-    modApi "dev.architectury:architectury-fabric:$architectury_api_version"
+    modImplementation "dev.architectury:architectury-fabric:$architectury_api_version"
     // EMI
-    modCompileOnly "dev.emi:emi-fabric:$emi_version"
+    modCompileOnly "dev.emi:emi-fabric:$emi_version:api"
     // Energy API
     include modApi("teamreborn:energy:$reborn_energy_version") { transitive = false }
-    // FTB Chunks
-    modCompileOnly("dev.ftb.mods:ftb-chunks-fabric:2101.1.10") { transitive = false }
-    modCompileOnly("dev.ftb.mods:ftb-library-fabric:2101.1.19") { transitive = false }
     // GeckoLib
-    modApi "software.bernie.geckolib:geckolib-fabric-$minecraft_version:$geckolib_version"
+    modImplementation "software.bernie.geckolib:geckolib-fabric-${minecraft_version}:$geckolib_version"
     // Jade
-    modCompileOnly "curse.maven:jade-324717:5639994"
+    modCompileOnly "curse.maven:jade-324717:4780013"
     // JEI
     modCompileOnly("mezz.jei:jei-$minecraft_version-fabric:$jei_version") { transitive = false }
-    // Oracle Index
-    modCompileOnly "curse.maven:oracle-index-1206582:6904576"
     // owo-lib
-    modApi "io.wispforest:owo-lib:$owo_version"
+    modImplementation "io.wispforest:owo-lib:$owo_version"
     annotationProcessor "io.wispforest:owo-lib:$owo_version"
     // REI
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:$rei_version"
-
-    modImplementation "curse.maven:ftb-filter-system-943925:6259287"
-    modImplementation "curse.maven:ftb-library-fabric-438495:6711325"
 
     /// runtime-only
     
@@ -114,33 +106,11 @@ dependencies {
         default: println("Unknown recipe viewer specified: $recipe_viewer. Must be EMI, REI, JEI, or disabled.")
     }
     // Athena (CTM)
-    modRuntimeOnly "earth.terrarium.athena:athena-fabric-1.21:4.0.0"
+    modRuntimeOnly "earth.terrarium.athena:athena-fabric-${minecraft_version}:3.1.2"
     // Mod Menu
-    modLocalRuntime "com.terraformersmc:modmenu:11.0.3"
-    // Simple Conveyor Belts
-    modLocalRuntime "curse.maven:simple-conveyor-belts-1292980:6721806"
-    // Tags Viewer
-    modLocalRuntime "curse.maven:tags-viewer-1119728:5807898"
+    modLocalRuntime "com.terraformersmc:modmenu:7.2.2"
     // Jade
-    modLocalRuntime "curse.maven:jade-324717:5639994"
-
-    /// datagen-only
-
-    // Alloy Forgery
-    modDataImplementation "curse.maven:alloy-forgery-438718:$alloy_forgery_version_id"
-    // Clutter
-    modDataImplementation "curse.maven:clutter-826060:$clutter_version_id"
-    modDataRuntimeOnly("com.terraformersmc.terraform-api:terraform-wood-api-v1:$project.terraform_wood_api_version") { transitive = false }
-    // Energized Power
-    modDataImplementation "curse.maven:energized-power-782147:$energized_power_version_id"
-    // Mythic Metals
-    modDataImplementation "curse.maven:mythicmetals-410127:$mythic_metals_version_id"
-    modDataRuntimeOnly("org.ladysnake.cardinal-components-api:cardinal-components-base:$cardinal_components_version") { transitive = false }
-    modDataRuntimeOnly("org.ladysnake.cardinal-components-api:cardinal-components-entity:$cardinal_components_version") { transitive = false }
-    modDataRuntimeOnly "maven.modrinth:additionalentityattributes:$additional_entity_attributes_version"
-    // Tech Reborn
-    modDataImplementation "curse.maven:techreborn-233564:5608205"
-    modDataImplementation "curse.maven:reborncore-237903:5608204"
+    modLocalRuntime "curse.maven:jade-324717:4780013"
 }
 
 publishMods {
@@ -152,8 +122,7 @@ publishMods {
     modrinth {
         accessToken = providers.environmentVariable("MODRINTH_API_KEY")
         projectId = "4sYI62kA"
-        minecraftVersions.add("1.21.1")
-        minecraftVersions.add("1.21")
+        minecraftVersions.add("1.20.1")
 
         requires("owo-lib")
         requires("geckolib")
@@ -167,8 +136,7 @@ publishMods {
     curseforge {
         accessToken = providers.environmentVariable("CURSEFORGE_API_KEY")
         projectId = "1030830"
-        minecraftVersions.add("1.21.1")
-        minecraftVersions.add("1.21")
+        minecraftVersions.add("1.20.1")
 
         requires("owo-lib")
         requires("geckolib")
@@ -176,7 +144,7 @@ publishMods {
         requires("fabric-api")
         requires("architectury-api")
 
-        javaVersions.add(JavaVersion.VERSION_21)
+        javaVersions.add(JavaVersion.VERSION_17)
         clientRequired = true
         serverRequired = true
 
@@ -190,7 +158,7 @@ publishMods {
     }
 }
 
-def commonIntermediaryJar = tasks.register('commonIntermediaryJar', RemapJarTask) {
+def commonIntermediaryJar = tasks.register('commonIntermediaryJar', net.fabricmc.loom.task.RemapJarTask) {
     dependsOn(tasks.named('jar', Jar))
     
     def commonJarTask = project(':common').tasks.named('jar', Jar).get()
@@ -227,7 +195,7 @@ def commonIntermediaryJar = tasks.register('commonIntermediaryJar', RemapJarTask
 
 }
 
-def commonIntermediarySourcesJar = tasks.register('commonIntermediarySourcesJar', RemapSourcesJarTask) {
+def commonIntermediarySourcesJar = tasks.register('commonIntermediarySourcesJar', net.fabricmc.loom.task.RemapSourcesJarTask) {
     def commonSourcesJarTask = project(':common').tasks.named('sourcesJar', Jar).get()
     commonSourcesJarTask.manifest {
         attributes['Fabric-Loom-Remap'] = true

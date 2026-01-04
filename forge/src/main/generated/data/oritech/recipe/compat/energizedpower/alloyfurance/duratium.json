@@ -1,0 +1,25 @@
+{
+  "forge:conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "energizedpower"
+    }
+  ],
+  "type": "energizedpower:alloy_furnace",
+  "inputs": [
+    {
+      "input": {
+        "tag": "c:ingots/platinum"
+      }
+    },
+    {
+      "input": {
+        "tag": "c:ingots/netherite"
+      }
+    }
+  ],
+  "output": {
+    "item": "oritech:duratium_ingot"
+  },
+  "ticks": 1000
+}

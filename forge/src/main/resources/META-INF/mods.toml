@@ -1,0 +1,53 @@
+modLoader = "javafml"
+loaderVersion = "[47.0,48.0)"
+issueTrackerURL = "https://github.com/konek101/OritechBackport/issues"
+license = "CC0-1.0"
+
+[[mods]]
+modId = "oritech"
+version = "${version}"
+displayName = "Oritech"
+authors = "Me! - Rearth"
+description = '''
+Simple tech mod.
+'''
+#logoFile = ""
+
+[[dependencies.oritech]]
+modId = "forge"
+mandatory = true
+versionRange = "[47,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.oritech]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20.1,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.oritech]]
+modId = "architectury"
+mandatory = true
+versionRange = "[9.0.0,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.oritech]]
+modId = "athena"
+mandatory = true
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.oritech]]
+modId = "owo"
+mandatory = true
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.oritech]]
+modId = "geckolib"
+mandatory = true
+ordering = "AFTER"
+side = "BOTH"

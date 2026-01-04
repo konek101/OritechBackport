@@ -8,9 +8,9 @@ import java.lang.reflect.RecordComponent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import rearth.oritech.compat.ByteBufCodecs;
+import rearth.oritech.compat.RegistryFriendlyByteBuf;
+import rearth.oritech.compat.StreamCodec;
 
 import static rearth.oritech.api.networking.NetworkManager.getAutoCodec;
 

@@ -1,7 +1,6 @@
 package rearth.oritech.api.recipe;
 
 import dev.architectury.fluid.FluidStack;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
@@ -19,22 +18,24 @@ import net.minecraft.world.level.material.Fluids;
 import rearth.oritech.Oritech;
 import rearth.oritech.api.recipe.util.MetalProcessingChainBuilder;
 import rearth.oritech.block.entity.augmenter.api.CustomAugmentsCollection;
+import rearth.oritech.compat.RecipeOutput;
 import rearth.oritech.init.*;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 import static rearth.oritech.api.recipe.util.RecipeHelpers.*;
 import static rearth.oritech.util.TagUtils.*;
 
 public class OritechRecipeGenerator extends RecipeProvider {
     
-    public OritechRecipeGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
-        super(output, registriesFuture);
+    public OritechRecipeGenerator(PackOutput output) {
+        super(output);
     }
     
     @Override
-    public void buildRecipes(RecipeOutput exporter) {
+    public void buildRecipes(Consumer<FinishedRecipe> consumerExporter) {
+        RecipeOutput exporter = RecipeOutput.wrap(consumerExporter);
         
         addDeepDrillOres(exporter);
         addFuels(exporter);
